@@ -254,104 +254,90 @@ export default function App() {
           {/* ========== JOURNEY ========== */}
           {tab==="journey"&&(
             <div>
-              {/* Legend — vendor names only */}
+              {/* Legend — vendor names with color dots */}
               <div style={{display:"flex",flexWrap:"wrap",gap:10,marginBottom:14,padding:"6px 14px",background:G50,borderRadius:6,border:`1px solid ${G200}`,alignItems:"center"}}>
                 {V.map(v=><div key={v.id} style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:8,height:8,borderRadius:2,background:v.color}}/><span style={{fontSize:12,fontWeight:600,color:G800}}>{v.name}</span></div>)}
               </div>
 
               {/* Stage Sections */}
-              <div style={{display:"flex",flexDirection:"column",gap:16}}>
-                {S.map((stage,idx)=>{
-                  const isExp=exp===stage.id;
-                  const sc=SC[stage.segment]||G400;
-                  const actV=V.filter(v=>stage.vc[v.id]?.on);
-                  const overlap=getOverlaps(stage,V);
-                  const sectionBg=idx%2===0?"#fff":"#FAFAFA";
+              {S.map((stage)=>{
+                const isExp=exp===stage.id;
+                const sc=SC[stage.segment]||G400;
+                const actV=V.filter(v=>stage.vc[v.id]?.on);
+                const overlap=getOverlaps(stage,V);
 
-                  return(
-                    <div key={stage.id} style={{borderRadius:6,border:`1px solid ${G200}`,overflow:"hidden",background:sectionBg}}>
-                      {/* Top Bar */}
-                      <div
-                        onClick={()=>setExp(isExp?null:stage.id)}
-                        style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 20px",borderLeft:`4px solid ${sc}`,cursor:"pointer",transition:"background .15s"}}
-                      >
-                        <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
-                          <span style={{fontSize:18,fontWeight:700,color:DK}}>{stage.range}</span>
-                          <span style={{fontSize:14,color:G500}}>{stage.label}</span>
-                          <SB s={stage.segment}/>
-                        </div>
-                        <div style={{display:"flex",alignItems:"center",gap:10}}>
-                          {/* Overlap indicator */}
-                          <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,fontWeight:600}}>
-                            {overlap.level==="clean"&&<><span style={{color:GR,fontSize:14}}>&#10003;</span><span style={{color:GR}}>Clean</span></>}
-                            {overlap.level==="warning"&&<><span style={{width:8,height:8,borderRadius:99,background:AM,display:"inline-block"}}/><span style={{color:AM}}>{overlap.overlapCount} overlap{overlap.overlapCount!==1?"s":""}</span></>}
-                            {overlap.level==="alert"&&<><span style={{width:8,height:8,borderRadius:99,background:RED,display:"inline-block"}}/><span style={{color:RED}}>{overlap.overlapCount} overlap{overlap.overlapCount!==1?"s":""}</span></>}
-                            <span style={{color:G400,fontSize:11}}>({overlap.totalTouches} touches)</span>
-                          </div>
-                          {edit&&<Btn small ghost onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}}>Edit</Btn>}
-                          <span style={{fontSize:20,color:G400,transform:isExp?"rotate(90deg)":"none",transition:"transform .2s",display:"inline-block"}}>{"\u203A"}</span>
-                        </div>
+                return(
+                  <div key={stage.id} style={{marginBottom:28}}>
+                    {/* Header row */}
+                    <div
+                      onClick={()=>setExp(isExp?null:stage.id)}
+                      style={{display:"flex",alignItems:"baseline",gap:10,borderLeft:`3px solid ${sc}`,paddingLeft:12,cursor:"pointer",paddingBottom:6}}
+                    >
+                      <span style={{fontSize:18,fontWeight:500,color:DK}}>{stage.range}</span>
+                      <span style={{fontSize:13,color:G500}}>{stage.label}</span>
+                      <SB s={stage.segment}/>
+                      <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5,fontSize:12,fontWeight:600}}>
+                        {overlap.level==="clean"&&<><span style={{color:GR,fontSize:14}}>&#10003;</span><span style={{color:GR}}>Clean · {overlap.totalTouches} touches</span></>}
+                        {overlap.level==="warning"&&<><span style={{width:7,height:7,borderRadius:99,background:RED,display:"inline-block"}}/><span style={{color:RED}}>{overlap.overlapCount} overlap{overlap.overlapCount!==1?"s":""} · {overlap.totalTouches} touches</span></>}
+                        {overlap.level==="alert"&&<><span style={{width:7,height:7,borderRadius:99,background:RED,display:"inline-block"}}/><span style={{color:RED}}>{overlap.overlapCount} overlap{overlap.overlapCount!==1?"s":""} · {overlap.totalTouches} touches</span></>}
                       </div>
-
-                      {/* Vendor Cards Row — always visible */}
-                      <div style={{padding:"12px 20px",display:"flex",flexWrap:"wrap",gap:10}}>
-                        {actV.length===0&&<div style={{fontSize:13,color:G400,fontStyle:"italic"}}>No active vendors at this stage</div>}
-                        {actV.map(v=>{
-                          const vc=stage.vc[v.id];
-                          return(
-                            <div key={v.id} style={{padding:"8px 12px",borderRadius:6,border:`1px solid ${G200}`,background:"#fff",minWidth:150,maxWidth:220}}>
-                              <div style={{fontSize:14,fontWeight:700,color:v.color,marginBottom:4}}>{v.name}</div>
-                              <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:3}}>{vc.ch.map(c=><span key={c} style={{display:"inline-block",fontSize:12,fontWeight:600,padding:"4px 10px",borderRadius:4,background:G100,color:G700,border:`1px solid ${G200}`}}>{c}</span>)}</div>
-                              {vc.note&&<div style={{fontSize:12,color:G400,lineHeight:1.4,marginTop:2}}>{vc.note}</div>}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Expandable Detail */}
-                      {isExp&&(
-                        <div onClick={e=>e.stopPropagation()} style={{padding:"0 20px 20px",cursor:"default"}}>
-                          {/* Strategy */}
-                          <div style={{padding:"4px 0 12px 14px",marginBottom:10}}>
-                            <div style={{fontSize:14,color:G700,lineHeight:1.6}}>{stage.goal}</div>
-                          </div>
-
-                          {/* Overlap Analysis */}
-                          {(overlap.warnings.length>0||overlap.alerts.length>0)&&(
-                            <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,marginBottom:14}}>
-                              <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Overlap Analysis</div>
-                              {overlap.alerts.map((a,i)=>(
-                                <div key={"a"+i} style={{padding:"8px 12px",borderRadius:6,background:"#FEE2E2",marginBottom:6,fontSize:13}}>
-                                  <span style={{fontWeight:700,color:"#B91C1C"}}>{"\u26A0"} {a.ch}: {a.names.join(", ")} ({a.count} vendors)</span>
-                                  <div style={{fontSize:12,color:"#991B1B",marginTop:3}}>High saturation — customer likely receiving duplicate messaging. Review vendor roles for this channel.</div>
-                                </div>
-                              ))}
-                              {overlap.warnings.map((w,i)=>(
-                                <div key={"w"+i} style={{padding:"8px 12px",borderRadius:6,background:"#FEF3C7",marginBottom:6,fontSize:13}}>
-                                  <span style={{fontWeight:700,color:"#92400E"}}>{"\u26A0"} {w.ch}: {w.names.join(", ")} ({w.count} vendors)</span>
-                                  <div style={{fontSize:12,color:"#78350F",marginTop:3}}>Consider coordinating send schedules to avoid same-week delivery</div>
-                                </div>
-                              ))}
-                              <div style={{fontSize:12,color:G500,marginTop:4}}>{"\u2139"} {overlap.totalTouches} total vendor-channel touch points at this stage</div>
-                            </div>
-                          )}
-
-                          {/* Offers & Financing */}
-                          {(stage.offers.length>0||stage.financing.length>0)&&(
-                            <div>
-                              <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Offers & Financing</div>
-                              <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-                                {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{o}</span>)}
-                                {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{f}</span>)}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      {edit&&<Btn small ghost onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}}>Edit</Btn>}
+                      <span style={{fontSize:18,color:G400,transform:isExp?"rotate(90deg)":"none",transition:"transform .2s",display:"inline-block"}}>{"\u203A"}</span>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {/* Vendor text rows — always visible */}
+                    <div style={{paddingLeft:15}}>
+                      {actV.map(v=>{
+                        const vc=stage.vc[v.id];
+                        return(
+                          <div key={v.id} style={{display:"flex",fontSize:13,lineHeight:1.6,marginBottom:6}}>
+                            <span style={{width:110,flexShrink:0,fontWeight:500,color:v.color}}>{v.name}</span>
+                            <span style={{width:180,flexShrink:0,color:G500}}>{vc.ch.join(" · ")}</span>
+                            <span style={{color:G400}}>{vc.note}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Expandable detail */}
+                    {isExp&&(
+                      <div onClick={e=>e.stopPropagation()} style={{paddingLeft:15,cursor:"default",borderTop:`1px solid ${G200}`,marginTop:8}}>
+                        {/* Strategy */}
+                        <div style={{fontSize:14,color:G700,lineHeight:1.6,marginTop:8,marginBottom:12}}>{stage.goal}</div>
+
+                        {/* Overlap Analysis */}
+                        {(overlap.warnings.length>0||overlap.alerts.length>0)&&(
+                          <div style={{marginBottom:12}}>
+                            {overlap.alerts.map((a,i)=>(
+                              <div key={"a"+i} style={{padding:"8px 12px",borderRadius:6,background:"#FEE2E2",marginBottom:6,fontSize:13}}>
+                                <span style={{fontWeight:700,color:"#B91C1C"}}>{"\u26A0"} {a.ch}: {a.names.join(", ")} ({a.count} vendors)</span>
+                                <div style={{fontSize:12,color:"#991B1B",marginTop:3}}>High saturation — customer likely receiving duplicate messaging. Review vendor roles for this channel.</div>
+                              </div>
+                            ))}
+                            {overlap.warnings.map((w,i)=>(
+                              <div key={"w"+i} style={{padding:"8px 12px",borderRadius:6,background:"#FEF3C7",marginBottom:6,fontSize:13}}>
+                                <span style={{fontWeight:700,color:"#92400E"}}>{"\u26A0"} {w.ch}: {w.names.join(", ")} ({w.count} vendors)</span>
+                                <div style={{fontSize:12,color:"#78350F",marginTop:3}}>Consider coordinating send schedules to avoid same-week delivery</div>
+                              </div>
+                            ))}
+                            <div style={{fontSize:12,color:G500,marginTop:4}}>{"\u2139"} {overlap.totalTouches} total vendor-channel touch points at this stage</div>
+                          </div>
+                        )}
+
+                        {/* Offers & Financing */}
+                        {(stage.offers.length>0||stage.financing.length>0)&&(
+                          <div style={{marginBottom:8}}>
+                            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                              {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:500,padding:"4px 12px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{o}</span>)}
+                              {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:500,padding:"4px 12px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{f}</span>)}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
               {edit&&(
                 <div style={{marginTop:14}}>
