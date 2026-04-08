@@ -3,12 +3,12 @@ import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const firebaseConfig = {
-  projectId: "tocc-budget-master",
-  appId: "1:881664185950:web:a2a8cfe3decd7ba7d646cf",
-  storageBucket: "tocc-budget-master.firebasestorage.app",
-  apiKey: "AIzaSyANQ0WGu5-B4ck_Sc4h3nSbKmfrr5_ovNw",
-  authDomain: "tocc-budget-master.firebaseapp.com",
-  messagingSenderId: "881664185950",
+  apiKey: "AIzaSyDBrdIX2GBD7OP7tZfU9tJdVLzLS9cTpIo",
+  authDomain: "fo-marketing-portal.firebaseapp.com",
+  projectId: "fo-marketing-portal",
+  storageBucket: "fo-marketing-portal.firebasestorage.app",
+  messagingSenderId: "11934251456",
+  appId: "1:11934251456:web:87cb8b5d3d86ce6467b025"
 };
 
 const app = initializeApp(firebaseConfig);

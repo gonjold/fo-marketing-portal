@@ -226,108 +226,109 @@ export default function App() {
 
           {/* ========== JOURNEY ========== */}
           {tab==="journey"&&(
-            <div>
-              {/* Legend */}
-              <div style={{display:"flex",flexWrap:"wrap",gap:10,marginBottom:20,padding:"10px 14px",background:G50,borderRadius:8,border:`1px solid ${G100}`,alignItems:"center"}}>
+            <div style={{margin:"0 -8px"}}>
+              {/* Legend — compact strip */}
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:10,padding:"5px 12px",background:G50,borderRadius:6,border:`1px solid ${G100}`,alignItems:"center"}}>
                 {V.map(v=><div key={v.id} style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:v.color}}/><span style={{fontSize:11,fontWeight:600,color:G800}}>{v.name}</span></div>)}
                 <div style={{marginLeft:"auto",display:"flex",gap:3,flexWrap:"wrap"}}>{CHANNELS.map(ch=><ChT key={ch} ch={ch} sm/>)}</div>
               </div>
 
-              {/* Timeline */}
-              <div style={{position:"relative",paddingLeft:32}}>
-                {/* Vertical line */}
-                <div style={{position:"absolute",left:14,top:0,bottom:0,width:2,background:`linear-gradient(to bottom, ${GR}, ${AM}, ${RED}, ${G400})`,borderRadius:2}}/>
-
-                {S.map((stage)=>{
-                  const isExp = exp===stage.id;
-                  const sc = SC[stage.segment]||G400;
-                  const actV = V.filter(v=>stage.vc[v.id]?.on);
-                  return (
-                    <div key={stage.id} style={{position:"relative",marginBottom:isExp?20:8}}>
-                      {/* Dot */}
-                      <div style={{position:"absolute",left:-25,top:16,width:12,height:12,borderRadius:"50%",background:"#fff",border:`3px solid ${sc}`,zIndex:2}}/>
-
-                      {/* Card */}
-                      <div className="tl-card" onClick={()=>setExp(isExp?null:stage.id)} style={{
-                        border:`1px solid ${isExp?sc+"40":G200}`,borderRadius:10,overflow:"hidden",cursor:"pointer",
-                        transition:"all .2s",background:isExp?sc+"04":"#fff",
-                      }}>
-                        {/* Header */}
-                        <div style={{padding:"14px 16px",display:"flex",alignItems:"center",gap:12}}>
-                          <div style={{flex:1}}>
-                            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
-                              <span style={{fontSize:15,fontWeight:700,color:DK}}>{stage.range}</span>
-                              <span style={{fontSize:12,color:G500}}>  {stage.label}</span>
-                              <SB s={stage.segment}/>
-                            </div>
-                            {/* Vendor + channel rows (always visible) */}
-                            <div style={{display:"flex",flexDirection:"column",gap:4,marginTop:6}}>
-                              {actV.map(v=>{const vc=stage.vc[v.id];return(
-                                <div key={v.id} style={{display:"flex",alignItems:"center",gap:8,minHeight:22}}>
-                                  <div style={{width:100,flexShrink:0,display:"flex",alignItems:"center",gap:4}}>
-                                    <div style={{width:6,height:6,borderRadius:1,background:v.color,flexShrink:0}}/>
-                                    <span style={{fontSize:11,fontWeight:700,color:v.color}}>{v.name}</span>
-                                  </div>
-                                  <div style={{display:"flex",flexWrap:"wrap",gap:0,flexShrink:0}}>{vc.ch.map(c=><ChT key={c} ch={c}/>)}</div>
-                                  {!isExp&&<div style={{fontSize:10,color:G400,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{vc.note}</div>}
-                                </div>
-                              );})}
-                              {actV.length===0&&<div style={{fontSize:11,color:G400,fontStyle:"italic"}}>No vendor coverage</div>}
-                            </div>
+              {/* Matrix Table */}
+              <div style={{overflowX:"auto",borderRadius:8,border:`1px solid ${G200}`}}>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:700}}>
+                  <thead>
+                    <tr style={{background:G50}}>
+                      <th style={{padding:"8px 12px",textAlign:"left",fontSize:10,fontWeight:700,color:G500,textTransform:"uppercase",letterSpacing:1,borderBottom:`2px solid ${G200}`,minWidth:150}}>Stage</th>
+                      {V.map(v=>(
+                        <th key={v.id} style={{padding:"8px 6px",textAlign:"center",fontSize:10,fontWeight:700,color:G700,borderBottom:`2px solid ${G200}`,whiteSpace:"nowrap"}}>
+                          <div style={{display:"flex",alignItems:"center",gap:4,justifyContent:"center"}}>
+                            <div style={{width:8,height:8,borderRadius:2,background:v.color,flexShrink:0}}/>
+                            {v.name}
                           </div>
-                          <div style={{display:"flex",alignItems:"center",gap:6}}>
-                            {edit&&<Btn small ghost onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}}>Edit</Btn>}
-                            <span style={{fontSize:18,color:G400,transform:isExp?"rotate(90deg)":"none",transition:"transform .2s",display:"inline-block"}}>{"\u203A"}</span>
-                          </div>
-                        </div>
-
-                        {/* Expanded */}
-                        {isExp && (
-                          <div onClick={e=>e.stopPropagation()} style={{padding:"0 16px 16px",cursor:"default",borderTop:`1px solid ${G200}`}}>
-                            {/* Goal */}
-                            <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,margin:"14px 0"}}>
-                              <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Strategy</div>
-                              <div style={{fontSize:13,color:G700,lineHeight:1.6}}>{stage.goal}</div>
+                        </th>
+                      ))}
+                      <th style={{width:60,borderBottom:`2px solid ${G200}`,background:G50}}/>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {S.map((stage,idx)=>{
+                      const isExp=exp===stage.id;
+                      const sc=SC[stage.segment]||G400;
+                      const actV=V.filter(v=>stage.vc[v.id]?.on);
+                      const rowBg=isExp?sc+"08":idx%2===0?"#fff":G50;
+                      const rows=[
+                        <tr key={stage.id} onClick={()=>setExp(isExp?null:stage.id)} style={{cursor:"pointer",background:rowBg,transition:"background .15s"}}>
+                          <td style={{padding:"10px 12px",borderBottom:`1px solid ${G100}`,borderLeft:`3px solid ${sc}`,verticalAlign:"middle"}}>
+                            <div style={{fontWeight:700,fontSize:13,color:DK}}>{stage.range}</div>
+                            <div style={{fontSize:11,color:G500,marginTop:1}}>{stage.label}</div>
+                            <div style={{marginTop:3}}><SB s={stage.segment}/></div>
+                          </td>
+                          {V.map(v=>{
+                            const vc=stage.vc[v.id];
+                            return(
+                              <td key={v.id} style={{padding:"6px 4px",borderBottom:`1px solid ${G100}`,textAlign:"center",verticalAlign:"middle"}}>
+                                {vc?.on?(
+                                  <div style={{display:"flex",flexWrap:"wrap",gap:2,justifyContent:"center"}}>{vc.ch.map(c=><ChT key={c} ch={c} sm/>)}</div>
+                                ):(
+                                  <span style={{color:G300,fontSize:14}}>—</span>
+                                )}
+                              </td>
+                            );
+                          })}
+                          <td style={{padding:"6px 8px",borderBottom:`1px solid ${G100}`,textAlign:"right",verticalAlign:"middle"}}>
+                            <div style={{display:"flex",alignItems:"center",gap:4,justifyContent:"flex-end"}}>
+                              {edit&&<Btn small ghost onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}}>Edit</Btn>}
+                              <span style={{fontSize:18,color:G400,transform:isExp?"rotate(90deg)":"none",transition:"transform .2s",display:"inline-block"}}>{"\u203A"}</span>
                             </div>
-
-                            {/* Vendor detail notes */}
-                            <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Communication Details</div>
-                            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:8,marginBottom:14}}>
-                              {actV.map(v=>{
-                                const vc=stage.vc[v.id];
-                                return (
-                                  <div key={v.id} style={{padding:"10px 12px",borderRadius:8,background:"#fff",border:`1px solid ${G200}`,borderLeft:`3px solid ${v.color}`}}>
-                                    <div style={{fontSize:12,fontWeight:700,color:v.color,marginBottom:4}}>{v.name}</div>
-                                    <div style={{fontSize:11,color:G500,lineHeight:1.5}}>{vc.note}</div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-
-                            {/* Offers + Financing */}
-                            {(stage.offers.length>0||stage.financing.length>0)&&(
-                              <div>
-                                <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Offers & Financing</div>
-                                <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-                                  {stage.offers.map((o,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"4px 12px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
-                                  {stage.financing.map((f,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"4px 12px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
+                          </td>
+                        </tr>
+                      ];
+                      if(isExp){
+                        rows.push(
+                          <tr key={stage.id+"-exp"}>
+                            <td colSpan={V.length+2} style={{padding:0,borderBottom:`1px solid ${G100}`}}>
+                              <div onClick={e=>e.stopPropagation()} style={{padding:"16px 20px",background:sc+"04",cursor:"default"}}>
+                                <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,marginBottom:14}}>
+                                  <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Strategy</div>
+                                  <div style={{fontSize:13,color:G700,lineHeight:1.6}}>{stage.goal}</div>
                                 </div>
+                                <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Communication Details</div>
+                                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:8,marginBottom:14}}>
+                                  {actV.map(v=>{
+                                    const vc=stage.vc[v.id];
+                                    return(
+                                      <div key={v.id} style={{padding:"10px 12px",borderRadius:8,background:"#fff",border:`1px solid ${G200}`,borderLeft:`3px solid ${v.color}`}}>
+                                        <div style={{fontSize:12,fontWeight:700,color:v.color,marginBottom:4}}>{v.name}</div>
+                                        <div style={{fontSize:11,color:G500,lineHeight:1.5}}>{vc.note}</div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                                {(stage.offers.length>0||stage.financing.length>0)&&(
+                                  <div>
+                                    <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Offers & Financing</div>
+                                    <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                                      {stage.offers.map((o,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"4px 12px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
+                                      {stage.financing.map((f,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"4px 12px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {edit&&(
-                  <div style={{position:"relative",marginTop:8,paddingLeft:4}}>
-                    <div style={{position:"absolute",left:-25,top:10,width:12,height:12,borderRadius:"50%",border:`2px dashed ${G300}`,background:"#fff"}}/>
-                    <Btn primary onClick={()=>setMod({type:"stage",data:{id:uid(),range:"",label:"",segment:"Active",goal:"",vc:Object.fromEntries(V.map(v=>[v.id,{on:false,ch:[],note:""}])),creatives:[],offers:[],financing:[]}})}>+ Add Stage</Btn>
-                  </div>
-                )}
+                            </td>
+                          </tr>
+                        );
+                      }
+                      return rows;
+                    })}
+                  </tbody>
+                </table>
               </div>
+
+              {edit&&(
+                <div style={{marginTop:12}}>
+                  <Btn primary onClick={()=>setMod({type:"stage",data:{id:uid(),range:"",label:"",segment:"Active",goal:"",vc:Object.fromEntries(V.map(v=>[v.id,{on:false,ch:[],note:""}])),creatives:[],offers:[],financing:[]}})}>+ Add Stage</Btn>
+                </div>
+              )}
             </div>
           )}
 
