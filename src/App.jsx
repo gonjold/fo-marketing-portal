@@ -110,7 +110,7 @@ const GLOSS = [
 ];
 
 // --- Micro-components ---
-const ChT = ({ch,sm}) => { const c=CC[ch]||CC.Email; return <span style={{display:"inline-block",fontSize:sm?10:12,fontWeight:600,padding:sm?"2px 6px":"5px 12px",borderRadius:4,background:c.bg,color:c.tx,border:`1px solid ${c.bd}`,marginRight:3,marginBottom:2}}>{ch}</span>; };
+const ChT = ({ch,sm}) => <span style={{display:"inline-block",fontSize:sm?10:12,fontWeight:600,padding:sm?"2px 6px":"4px 10px",borderRadius:4,background:G100,color:G700,border:`1px solid ${G200}`,marginRight:3,marginBottom:2}}>{ch}</span>;
 const SB = ({s}) => { const c=SC[s]||G500; return <span style={{fontSize:10,fontWeight:700,color:c,background:c+"12",padding:"3px 10px",borderRadius:99,border:`1px solid ${c}22`}}>{s}</span>; };
 const Btn = ({children,onClick,primary,small,danger,ghost,disabled,sx})=><button disabled={disabled} onClick={onClick} style={{padding:small?"4px 10px":"7px 16px",fontSize:small?11:12,fontWeight:600,borderRadius:6,cursor:disabled?"default":"pointer",border:ghost?`1px solid ${G200}`:"none",opacity:disabled?.4:1,background:danger?"#FEE2E2":primary?RED:ghost?"#fff":G100,color:danger?"#B91C1C":primary?"#fff":G700,transition:"all .15s",...sx}}>{children}</button>;
 const Inp = ({value,onChange,placeholder,sx,...r})=><input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} style={{padding:"7px 10px",border:`1px solid ${G200}`,borderRadius:6,fontSize:13,width:"100%",fontFamily:"inherit",...sx}} {...r}/>;
@@ -254,10 +254,9 @@ export default function App() {
           {/* ========== JOURNEY ========== */}
           {tab==="journey"&&(
             <div>
-              {/* Legend — compact strip */}
-              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:14,padding:"6px 14px",background:G50,borderRadius:6,border:`1px solid ${G100}`,alignItems:"center"}}>
-                {V.map(v=><div key={v.id} style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:v.color}}/><span style={{fontSize:12,fontWeight:600,color:G800}}>{v.name}</span></div>)}
-                <div style={{marginLeft:"auto",display:"flex",gap:3,flexWrap:"wrap"}}>{CHANNELS.map(ch=><ChT key={ch} ch={ch}/>)}</div>
+              {/* Legend — vendor names only */}
+              <div style={{display:"flex",flexWrap:"wrap",gap:10,marginBottom:14,padding:"6px 14px",background:G50,borderRadius:6,border:`1px solid ${G200}`,alignItems:"center"}}>
+                {V.map(v=><div key={v.id} style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:8,height:8,borderRadius:2,background:v.color}}/><span style={{fontSize:12,fontWeight:600,color:G800}}>{v.name}</span></div>)}
               </div>
 
               {/* Stage Sections */}
@@ -270,11 +269,11 @@ export default function App() {
                   const sectionBg=idx%2===0?"#fff":"#FAFAFA";
 
                   return(
-                    <div key={stage.id} style={{borderRadius:10,border:`1px solid ${G200}`,overflow:"hidden",background:sectionBg}}>
+                    <div key={stage.id} style={{borderRadius:6,border:`1px solid ${G200}`,overflow:"hidden",background:sectionBg}}>
                       {/* Top Bar */}
                       <div
                         onClick={()=>setExp(isExp?null:stage.id)}
-                        style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 20px",borderLeft:`4px solid ${sc}`,background:sc+"06",cursor:"pointer",transition:"background .15s"}}
+                        style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 20px",borderLeft:`4px solid ${sc}`,cursor:"pointer",transition:"background .15s"}}
                       >
                         <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
                           <span style={{fontSize:18,fontWeight:700,color:DK}}>{stage.range}</span>
@@ -300,10 +299,10 @@ export default function App() {
                         {actV.map(v=>{
                           const vc=stage.vc[v.id];
                           return(
-                            <div key={v.id} style={{padding:"10px 14px",borderRadius:8,border:`1px solid ${G200}`,borderLeft:`3px solid ${v.color}`,background:"#fff",minWidth:150,maxWidth:220}}>
-                              <div style={{fontSize:14,fontWeight:700,color:v.color,marginBottom:5}}>{v.name}</div>
-                              <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:4}}>{vc.ch.map(c=><span key={c} style={{display:"inline-block",fontSize:12,fontWeight:600,padding:"5px 12px",borderRadius:4,background:CC[c]?.bg||"#eee",color:CC[c]?.tx||G700,border:`1px solid ${CC[c]?.bd||G200}`}}>{c}</span>)}</div>
-                              {vc.note&&<div style={{fontSize:12,color:G500,lineHeight:1.4,marginTop:2}}>{vc.note}</div>}
+                            <div key={v.id} style={{padding:"8px 12px",borderRadius:6,border:`1px solid ${G200}`,background:"#fff",minWidth:150,maxWidth:220}}>
+                              <div style={{fontSize:14,fontWeight:700,color:v.color,marginBottom:4}}>{v.name}</div>
+                              <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:3}}>{vc.ch.map(c=><span key={c} style={{display:"inline-block",fontSize:12,fontWeight:600,padding:"4px 10px",borderRadius:4,background:G100,color:G700,border:`1px solid ${G200}`}}>{c}</span>)}</div>
+                              {vc.note&&<div style={{fontSize:12,color:G400,lineHeight:1.4,marginTop:2}}>{vc.note}</div>}
                             </div>
                           );
                         })}
@@ -313,8 +312,7 @@ export default function App() {
                       {isExp&&(
                         <div onClick={e=>e.stopPropagation()} style={{padding:"0 20px 20px",cursor:"default"}}>
                           {/* Strategy */}
-                          <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,marginBottom:14}}>
-                            <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Strategy</div>
+                          <div style={{padding:"4px 0 12px 14px",marginBottom:10}}>
                             <div style={{fontSize:14,color:G700,lineHeight:1.6}}>{stage.goal}</div>
                           </div>
 
@@ -343,8 +341,8 @@ export default function App() {
                             <div>
                               <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Offers & Financing</div>
                               <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-                                {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
-                                {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
+                                {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{o}</span>)}
+                                {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{f}</span>)}
                               </div>
                             </div>
                           )}
@@ -369,11 +367,12 @@ export default function App() {
               {S.map(stage=>{
                 if(stage.creatives.length===0 && !edit) return null;
                 const sc=SC[stage.segment]||G400;
+                const hasOffers=stage.offers.length>0||stage.financing.length>0;
                 return (
-                  <div key={stage.id} style={{marginBottom:28}}>
+                  <div key={stage.id} style={{marginBottom:20}}>
                     {/* Stage header */}
-                    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12,paddingBottom:8,borderBottom:`2px solid ${sc}20`}}>
-                      <div style={{width:4,height:24,borderRadius:2,background:sc}}/>
+                    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10,paddingBottom:6,borderBottom:`1px solid ${G200}`}}>
+                      <div style={{width:3,height:20,borderRadius:2,background:sc}}/>
                       <span style={{fontSize:15,fontWeight:700,color:DK}}>{stage.range}</span>
                       <span style={{fontSize:12,color:G500}}>{stage.label}</span>
                       <SB s={stage.segment}/>
@@ -381,31 +380,29 @@ export default function App() {
                     </div>
 
                     {/* Creative cards */}
-                    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:12}}>
                       {stage.creatives.map(cr=>(
-                        <div key={cr.id} style={{borderRadius:10,border:`1px solid ${G200}`,overflow:"hidden",background:"#fff",transition:"box-shadow .2s"}} className="tl-card">
+                        <div key={cr.id} style={{borderRadius:6,border:`1px solid ${G200}`,overflow:"hidden",background:"#fff",transition:"box-shadow .2s"}} className="tl-card">
                           {/* Image area */}
                           <div
                             onClick={()=>cr.img&&setPreview(cr.img)}
                             style={{
-                              height:cr.img?160:60,background:cr.img?`url(${cr.img}) center/cover`:sc+"08",
+                              height:cr.img?120:40,background:cr.img?`url(${cr.img}) center/cover`:"#fff",
                               display:"flex",alignItems:"center",justifyContent:"center",
                               cursor:cr.img?"pointer":"default",position:"relative",
-                              borderBottom:`1px dashed ${cr.img?"transparent":sc+"30"}`,
+                              borderBottom:`1px dashed ${cr.img?"transparent":G200}`,
                             }}
                           >
                             {!cr.img&&(
-                              <div style={{textAlign:"center",color:sc,opacity:.4}}>
-                                <div style={{fontSize:12,fontWeight:600}}>No image</div>
-                              </div>
+                              <div style={{fontSize:10,color:G400}}>No image</div>
                             )}
                             {cr.img&&<div style={{position:"absolute",bottom:6,right:6,background:"rgba(0,0,0,.5)",color:"#fff",fontSize:9,padding:"2px 8px",borderRadius:4,fontWeight:600}}>Click to preview</div>}
                           </div>
                           {/* Info */}
-                          <div style={{padding:"12px 14px"}}>
+                          <div style={{padding:"10px 12px"}}>
                             <div style={{fontSize:15,fontWeight:700,color:DK,marginBottom:3}}>{cr.title}</div>
-                            <div style={{display:"flex",gap:3,marginBottom:6,flexWrap:"wrap"}}>
-                              {cr.channels.split(/\s*\+\s*/).map(ch=><ChT key={ch} ch={ch.trim()}/>)}
+                            <div style={{display:"flex",gap:3,marginBottom:5,flexWrap:"wrap"}}>
+                              {cr.channels.split(/\s*\+\s*/).map(ch=><ChT key={ch} ch={ch.trim()} sm/>)}
                             </div>
                             <div style={{fontSize:13,color:G500,lineHeight:1.5}}>{cr.desc}</div>
                           </div>
@@ -413,12 +410,17 @@ export default function App() {
                       ))}
                     </div>
 
-                    {/* Offers row */}
-                    {(stage.offers.length>0||stage.financing.length>0)&&(
-                      <div style={{display:"flex",flexWrap:"wrap",gap:5,marginTop:10}}>
-                        {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
-                        {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
-                      </div>
+                    {/* Offers — collapsible */}
+                    {hasOffers&&(
+                      <details style={{marginTop:8}}>
+                        <summary style={{fontSize:11,fontWeight:600,color:G400,cursor:"pointer",padding:"4px 0",listStyle:"none",display:"flex",alignItems:"center",gap:4}}>
+                          <span style={{fontSize:13,display:"inline-block",transition:"transform .2s"}}>{"\u203A"}</span> Offers & Financing
+                        </summary>
+                        <div style={{display:"flex",flexWrap:"wrap",gap:5,marginTop:6}}>
+                          {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"4px 12px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{o}</span>)}
+                          {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"4px 12px",borderRadius:99,background:G100,color:G700,border:`1px solid ${G200}`}}>{f}</span>)}
+                        </div>
+                      </details>
                     )}
                   </div>
                 );
@@ -430,9 +432,9 @@ export default function App() {
           {tab==="vendors"&&(<>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14}}>
               {V.map(v=>(
-                <div key={v.id} style={{border:`1px solid ${G200}`,borderRadius:10,padding:18,borderTop:`3px solid ${v.color}`}}>
+                <div key={v.id} style={{border:`1px solid ${G200}`,borderRadius:6,padding:18}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                    <div style={{fontSize:18,fontWeight:700}}>{v.name}</div>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:10,height:10,borderRadius:99,background:v.color,flexShrink:0}}/><span style={{fontSize:18,fontWeight:700}}>{v.name}</span></div>
                     {edit&&<div style={{display:"flex",gap:4}}>
                       <Btn small ghost onClick={()=>setMod({type:"vendor",data:{...v}})}>Edit</Btn>
                       <Btn small danger onClick={()=>{if(confirm(`Delete ${v.name}?`))delVendor(v.id);}}>Del</Btn>
@@ -441,7 +443,7 @@ export default function App() {
                   <p style={{fontSize:14,color:G500,lineHeight:1.6,margin:"6px 0 0"}}>{v.desc}</p>
                 </div>
               ))}
-              {edit&&<div style={{border:`2px dashed ${G300}`,borderRadius:10,padding:18,display:"flex",alignItems:"center",justifyContent:"center",minHeight:100}}>
+              {edit&&<div style={{border:`2px dashed ${G300}`,borderRadius:6,padding:18,display:"flex",alignItems:"center",justifyContent:"center",minHeight:100}}>
                 <Btn primary onClick={()=>setMod({type:"vendor",data:{id:uid(),name:"",color:VCOLS[V.length%VCOLS.length],desc:""}})}>+ Add Vendor</Btn>
               </div>}
             </div>
