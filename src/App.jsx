@@ -70,6 +70,33 @@ const initS = [
     offers:["$35.55 Oil Change","$99 Alignment","Free MPI","Price Match"],financing:[]},
 ];
 
+// --- Overlap Intelligence ---
+const getOverlaps = (stage, vendors) => {
+  const channelVendors = {};
+  let totalTouches = 0;
+  vendors.forEach(v => {
+    const vc = stage.vc[v.id];
+    if (vc?.on) {
+      vc.ch.forEach(ch => {
+        if (!channelVendors[ch]) channelVendors[ch] = [];
+        channelVendors[ch].push(v.name);
+        totalTouches++;
+      });
+    }
+  });
+  const warnings = []; // 3 vendors same channel
+  const alerts = [];   // 4+ vendors same channel
+  Object.entries(channelVendors).forEach(([ch, names]) => {
+    if (names.length >= 4) alerts.push({ ch, names, count: names.length });
+    else if (names.length >= 3) warnings.push({ ch, names, count: names.length });
+  });
+  const hasAlert = alerts.length > 0 || totalTouches >= 15;
+  const hasWarning = warnings.length > 0 || totalTouches >= 10;
+  const level = hasAlert ? "alert" : hasWarning ? "warning" : "clean";
+  const overlapCount = alerts.length + warnings.length;
+  return { channelVendors, warnings, alerts, totalTouches, level, overlapCount };
+};
+
 const GLOSS = [
   {t:"TLE Active",d:"Purchased or serviced at PMA dealer in last 12 months."},
   {t:"TLE Cross Active",d:"Serviced 2x at dealership outside PMA in last 12 months."},
@@ -83,7 +110,7 @@ const GLOSS = [
 ];
 
 // --- Micro-components ---
-const ChT = ({ch,sm}) => { const c=CC[ch]||CC.Email; return <span style={{display:"inline-block",fontSize:sm?9:10,fontWeight:600,padding:sm?"1px 5px":"2px 7px",borderRadius:4,background:c.bg,color:c.tx,border:`1px solid ${c.bd}`,marginRight:3,marginBottom:2}}>{ch}</span>; };
+const ChT = ({ch,sm}) => { const c=CC[ch]||CC.Email; return <span style={{display:"inline-block",fontSize:sm?10:12,fontWeight:600,padding:sm?"2px 6px":"5px 12px",borderRadius:4,background:c.bg,color:c.tx,border:`1px solid ${c.bd}`,marginRight:3,marginBottom:2}}>{ch}</span>; };
 const SB = ({s}) => { const c=SC[s]||G500; return <span style={{fontSize:10,fontWeight:700,color:c,background:c+"12",padding:"3px 10px",borderRadius:99,border:`1px solid ${c}22`}}>{s}</span>; };
 const Btn = ({children,onClick,primary,small,danger,ghost,disabled,sx})=><button disabled={disabled} onClick={onClick} style={{padding:small?"4px 10px":"7px 16px",fontSize:small?11:12,fontWeight:600,borderRadius:6,cursor:disabled?"default":"pointer",border:ghost?`1px solid ${G200}`:"none",opacity:disabled?.4:1,background:danger?"#FEE2E2":primary?RED:ghost?"#fff":G100,color:danger?"#B91C1C":primary?"#fff":G700,transition:"all .15s",...sx}}>{children}</button>;
 const Inp = ({value,onChange,placeholder,sx,...r})=><input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} style={{padding:"7px 10px",border:`1px solid ${G200}`,borderRadius:6,fontSize:13,width:"100%",fontFamily:"inherit",...sx}} {...r}/>;
@@ -226,106 +253,110 @@ export default function App() {
 
           {/* ========== JOURNEY ========== */}
           {tab==="journey"&&(
-            <div style={{margin:"0 -8px"}}>
+            <div>
               {/* Legend — compact strip */}
-              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:10,padding:"5px 12px",background:G50,borderRadius:6,border:`1px solid ${G100}`,alignItems:"center"}}>
-                {V.map(v=><div key={v.id} style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:v.color}}/><span style={{fontSize:11,fontWeight:600,color:G800}}>{v.name}</span></div>)}
-                <div style={{marginLeft:"auto",display:"flex",gap:3,flexWrap:"wrap"}}>{CHANNELS.map(ch=><ChT key={ch} ch={ch} sm/>)}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:14,padding:"6px 14px",background:G50,borderRadius:6,border:`1px solid ${G100}`,alignItems:"center"}}>
+                {V.map(v=><div key={v.id} style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:v.color}}/><span style={{fontSize:12,fontWeight:600,color:G800}}>{v.name}</span></div>)}
+                <div style={{marginLeft:"auto",display:"flex",gap:3,flexWrap:"wrap"}}>{CHANNELS.map(ch=><ChT key={ch} ch={ch}/>)}</div>
               </div>
 
-              {/* Matrix Table */}
-              <div style={{overflowX:"auto",borderRadius:8,border:`1px solid ${G200}`}}>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:700}}>
-                  <thead>
-                    <tr style={{background:G50}}>
-                      <th style={{padding:"8px 12px",textAlign:"left",fontSize:10,fontWeight:700,color:G500,textTransform:"uppercase",letterSpacing:1,borderBottom:`2px solid ${G200}`,minWidth:150}}>Stage</th>
-                      {V.map(v=>(
-                        <th key={v.id} style={{padding:"8px 6px",textAlign:"center",fontSize:10,fontWeight:700,color:G700,borderBottom:`2px solid ${G200}`,whiteSpace:"nowrap"}}>
-                          <div style={{display:"flex",alignItems:"center",gap:4,justifyContent:"center"}}>
-                            <div style={{width:8,height:8,borderRadius:2,background:v.color,flexShrink:0}}/>
-                            {v.name}
+              {/* Stage Sections */}
+              <div style={{display:"flex",flexDirection:"column",gap:16}}>
+                {S.map((stage,idx)=>{
+                  const isExp=exp===stage.id;
+                  const sc=SC[stage.segment]||G400;
+                  const actV=V.filter(v=>stage.vc[v.id]?.on);
+                  const overlap=getOverlaps(stage,V);
+                  const sectionBg=idx%2===0?"#fff":"#FAFAFA";
+
+                  return(
+                    <div key={stage.id} style={{borderRadius:10,border:`1px solid ${G200}`,overflow:"hidden",background:sectionBg}}>
+                      {/* Top Bar */}
+                      <div
+                        onClick={()=>setExp(isExp?null:stage.id)}
+                        style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 20px",borderLeft:`4px solid ${sc}`,background:sc+"06",cursor:"pointer",transition:"background .15s"}}
+                      >
+                        <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                          <span style={{fontSize:18,fontWeight:700,color:DK}}>{stage.range}</span>
+                          <span style={{fontSize:14,color:G500}}>{stage.label}</span>
+                          <SB s={stage.segment}/>
+                        </div>
+                        <div style={{display:"flex",alignItems:"center",gap:10}}>
+                          {/* Overlap indicator */}
+                          <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,fontWeight:600}}>
+                            {overlap.level==="clean"&&<><span style={{color:GR,fontSize:14}}>&#10003;</span><span style={{color:GR}}>Clean</span></>}
+                            {overlap.level==="warning"&&<><span style={{width:8,height:8,borderRadius:99,background:AM,display:"inline-block"}}/><span style={{color:AM}}>{overlap.overlapCount} overlap{overlap.overlapCount!==1?"s":""}</span></>}
+                            {overlap.level==="alert"&&<><span style={{width:8,height:8,borderRadius:99,background:RED,display:"inline-block"}}/><span style={{color:RED}}>{overlap.overlapCount} overlap{overlap.overlapCount!==1?"s":""}</span></>}
+                            <span style={{color:G400,fontSize:11}}>({overlap.totalTouches} touches)</span>
                           </div>
-                        </th>
-                      ))}
-                      <th style={{width:60,borderBottom:`2px solid ${G200}`,background:G50}}/>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {S.map((stage,idx)=>{
-                      const isExp=exp===stage.id;
-                      const sc=SC[stage.segment]||G400;
-                      const actV=V.filter(v=>stage.vc[v.id]?.on);
-                      const rowBg=isExp?sc+"08":idx%2===0?"#fff":G50;
-                      const rows=[
-                        <tr key={stage.id} onClick={()=>setExp(isExp?null:stage.id)} style={{cursor:"pointer",background:rowBg,transition:"background .15s"}}>
-                          <td style={{padding:"10px 12px",borderBottom:`1px solid ${G100}`,borderLeft:`3px solid ${sc}`,verticalAlign:"middle"}}>
-                            <div style={{fontWeight:700,fontSize:13,color:DK}}>{stage.range}</div>
-                            <div style={{fontSize:11,color:G500,marginTop:1}}>{stage.label}</div>
-                            <div style={{marginTop:3}}><SB s={stage.segment}/></div>
-                          </td>
-                          {V.map(v=>{
-                            const vc=stage.vc[v.id];
-                            return(
-                              <td key={v.id} style={{padding:"6px 4px",borderBottom:`1px solid ${G100}`,textAlign:"center",verticalAlign:"middle"}}>
-                                {vc?.on?(
-                                  <div style={{display:"flex",flexWrap:"wrap",gap:2,justifyContent:"center"}}>{vc.ch.map(c=><ChT key={c} ch={c} sm/>)}</div>
-                                ):(
-                                  <span style={{color:G300,fontSize:14}}>—</span>
-                                )}
-                              </td>
-                            );
-                          })}
-                          <td style={{padding:"6px 8px",borderBottom:`1px solid ${G100}`,textAlign:"right",verticalAlign:"middle"}}>
-                            <div style={{display:"flex",alignItems:"center",gap:4,justifyContent:"flex-end"}}>
-                              {edit&&<Btn small ghost onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}}>Edit</Btn>}
-                              <span style={{fontSize:18,color:G400,transform:isExp?"rotate(90deg)":"none",transition:"transform .2s",display:"inline-block"}}>{"\u203A"}</span>
+                          {edit&&<Btn small ghost onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}}>Edit</Btn>}
+                          <span style={{fontSize:20,color:G400,transform:isExp?"rotate(90deg)":"none",transition:"transform .2s",display:"inline-block"}}>{"\u203A"}</span>
+                        </div>
+                      </div>
+
+                      {/* Vendor Cards Row — always visible */}
+                      <div style={{padding:"12px 20px",display:"flex",flexWrap:"wrap",gap:10}}>
+                        {actV.length===0&&<div style={{fontSize:13,color:G400,fontStyle:"italic"}}>No active vendors at this stage</div>}
+                        {actV.map(v=>{
+                          const vc=stage.vc[v.id];
+                          return(
+                            <div key={v.id} style={{padding:"10px 14px",borderRadius:8,border:`1px solid ${G200}`,borderLeft:`3px solid ${v.color}`,background:"#fff",minWidth:150,maxWidth:220}}>
+                              <div style={{fontSize:14,fontWeight:700,color:v.color,marginBottom:5}}>{v.name}</div>
+                              <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:4}}>{vc.ch.map(c=><span key={c} style={{display:"inline-block",fontSize:12,fontWeight:600,padding:"5px 12px",borderRadius:4,background:CC[c]?.bg||"#eee",color:CC[c]?.tx||G700,border:`1px solid ${CC[c]?.bd||G200}`}}>{c}</span>)}</div>
+                              {vc.note&&<div style={{fontSize:12,color:G500,lineHeight:1.4,marginTop:2}}>{vc.note}</div>}
                             </div>
-                          </td>
-                        </tr>
-                      ];
-                      if(isExp){
-                        rows.push(
-                          <tr key={stage.id+"-exp"}>
-                            <td colSpan={V.length+2} style={{padding:0,borderBottom:`1px solid ${G100}`}}>
-                              <div onClick={e=>e.stopPropagation()} style={{padding:"16px 20px",background:sc+"04",cursor:"default"}}>
-                                <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,marginBottom:14}}>
-                                  <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Strategy</div>
-                                  <div style={{fontSize:13,color:G700,lineHeight:1.6}}>{stage.goal}</div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Expandable Detail */}
+                      {isExp&&(
+                        <div onClick={e=>e.stopPropagation()} style={{padding:"0 20px 20px",cursor:"default"}}>
+                          {/* Strategy */}
+                          <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,marginBottom:14}}>
+                            <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Strategy</div>
+                            <div style={{fontSize:14,color:G700,lineHeight:1.6}}>{stage.goal}</div>
+                          </div>
+
+                          {/* Overlap Analysis */}
+                          {(overlap.warnings.length>0||overlap.alerts.length>0)&&(
+                            <div style={{padding:"12px 14px",background:"#fff",borderRadius:8,border:`1px solid ${G200}`,marginBottom:14}}>
+                              <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Overlap Analysis</div>
+                              {overlap.alerts.map((a,i)=>(
+                                <div key={"a"+i} style={{padding:"8px 12px",borderRadius:6,background:"#FEE2E2",marginBottom:6,fontSize:13}}>
+                                  <span style={{fontWeight:700,color:"#B91C1C"}}>{"\u26A0"} {a.ch}: {a.names.join(", ")} ({a.count} vendors)</span>
+                                  <div style={{fontSize:12,color:"#991B1B",marginTop:3}}>High saturation — customer likely receiving duplicate messaging. Review vendor roles for this channel.</div>
                                 </div>
-                                <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Communication Details</div>
-                                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:8,marginBottom:14}}>
-                                  {actV.map(v=>{
-                                    const vc=stage.vc[v.id];
-                                    return(
-                                      <div key={v.id} style={{padding:"10px 12px",borderRadius:8,background:"#fff",border:`1px solid ${G200}`,borderLeft:`3px solid ${v.color}`}}>
-                                        <div style={{fontSize:12,fontWeight:700,color:v.color,marginBottom:4}}>{v.name}</div>
-                                        <div style={{fontSize:11,color:G500,lineHeight:1.5}}>{vc.note}</div>
-                                      </div>
-                                    );
-                                  })}
+                              ))}
+                              {overlap.warnings.map((w,i)=>(
+                                <div key={"w"+i} style={{padding:"8px 12px",borderRadius:6,background:"#FEF3C7",marginBottom:6,fontSize:13}}>
+                                  <span style={{fontWeight:700,color:"#92400E"}}>{"\u26A0"} {w.ch}: {w.names.join(", ")} ({w.count} vendors)</span>
+                                  <div style={{fontSize:12,color:"#78350F",marginTop:3}}>Consider coordinating send schedules to avoid same-week delivery</div>
                                 </div>
-                                {(stage.offers.length>0||stage.financing.length>0)&&(
-                                  <div>
-                                    <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Offers & Financing</div>
-                                    <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-                                      {stage.offers.map((o,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"4px 12px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
-                                      {stage.financing.map((f,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"4px 12px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
-                                    </div>
-                                  </div>
-                                )}
+                              ))}
+                              <div style={{fontSize:12,color:G500,marginTop:4}}>{"\u2139"} {overlap.totalTouches} total vendor-channel touch points at this stage</div>
+                            </div>
+                          )}
+
+                          {/* Offers & Financing */}
+                          {(stage.offers.length>0||stage.financing.length>0)&&(
+                            <div>
+                              <div style={{fontSize:10,fontWeight:700,color:G400,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Offers & Financing</div>
+                              <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                                {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
+                                {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      }
-                      return rows;
-                    })}
-                  </tbody>
-                </table>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               {edit&&(
-                <div style={{marginTop:12}}>
+                <div style={{marginTop:14}}>
                   <Btn primary onClick={()=>setMod({type:"stage",data:{id:uid(),range:"",label:"",segment:"Active",goal:"",vc:Object.fromEntries(V.map(v=>[v.id,{on:false,ch:[],note:""}])),creatives:[],offers:[],financing:[]}})}>+ Add Stage</Btn>
                 </div>
               )}
@@ -350,33 +381,33 @@ export default function App() {
                     </div>
 
                     {/* Creative cards */}
-                    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14}}>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
                       {stage.creatives.map(cr=>(
                         <div key={cr.id} style={{borderRadius:10,border:`1px solid ${G200}`,overflow:"hidden",background:"#fff",transition:"box-shadow .2s"}} className="tl-card">
                           {/* Image area */}
                           <div
                             onClick={()=>cr.img&&setPreview(cr.img)}
                             style={{
-                              height:160,background:cr.img?`url(${cr.img}) center/cover`:sc+"08",
+                              height:cr.img?160:60,background:cr.img?`url(${cr.img}) center/cover`:sc+"08",
                               display:"flex",alignItems:"center",justifyContent:"center",
                               cursor:cr.img?"pointer":"default",position:"relative",
+                              borderBottom:`1px dashed ${cr.img?"transparent":sc+"30"}`,
                             }}
                           >
                             {!cr.img&&(
                               <div style={{textAlign:"center",color:sc,opacity:.4}}>
-                                <div style={{fontSize:32,marginBottom:4}}>+</div>
-                                <div style={{fontSize:10,fontWeight:600}}>No creative uploaded</div>
+                                <div style={{fontSize:12,fontWeight:600}}>No image</div>
                               </div>
                             )}
                             {cr.img&&<div style={{position:"absolute",bottom:6,right:6,background:"rgba(0,0,0,.5)",color:"#fff",fontSize:9,padding:"2px 8px",borderRadius:4,fontWeight:600}}>Click to preview</div>}
                           </div>
                           {/* Info */}
                           <div style={{padding:"12px 14px"}}>
-                            <div style={{fontSize:13,fontWeight:700,color:DK,marginBottom:2}}>{cr.title}</div>
+                            <div style={{fontSize:15,fontWeight:700,color:DK,marginBottom:3}}>{cr.title}</div>
                             <div style={{display:"flex",gap:3,marginBottom:6,flexWrap:"wrap"}}>
-                              {cr.channels.split(/\s*\+\s*/).map(ch=><ChT key={ch} ch={ch.trim()} sm/>)}
+                              {cr.channels.split(/\s*\+\s*/).map(ch=><ChT key={ch} ch={ch.trim()}/>)}
                             </div>
-                            <div style={{fontSize:11,color:G500,lineHeight:1.5}}>{cr.desc}</div>
+                            <div style={{fontSize:13,color:G500,lineHeight:1.5}}>{cr.desc}</div>
                           </div>
                         </div>
                       ))}
@@ -385,8 +416,8 @@ export default function App() {
                     {/* Offers row */}
                     {(stage.offers.length>0||stage.financing.length>0)&&(
                       <div style={{display:"flex",flexWrap:"wrap",gap:5,marginTop:10}}>
-                        {stage.offers.map((o,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"3px 10px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
-                        {stage.financing.map((f,i)=><span key={i} style={{fontSize:10,fontWeight:600,padding:"3px 10px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
+                        {stage.offers.map((o,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:RED+"08",color:RED,border:`1px solid ${RED}18`}}>{o}</span>)}
+                        {stage.financing.map((f,i)=><span key={i} style={{fontSize:12,fontWeight:600,padding:"5px 14px",borderRadius:99,background:BL+"08",color:BL,border:`1px solid ${BL}18`}}>{f}</span>)}
                       </div>
                     )}
                   </div>
@@ -401,13 +432,13 @@ export default function App() {
               {V.map(v=>(
                 <div key={v.id} style={{border:`1px solid ${G200}`,borderRadius:10,padding:18,borderTop:`3px solid ${v.color}`}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                    <div style={{fontSize:16,fontWeight:700}}>{v.name}</div>
+                    <div style={{fontSize:18,fontWeight:700}}>{v.name}</div>
                     {edit&&<div style={{display:"flex",gap:4}}>
                       <Btn small ghost onClick={()=>setMod({type:"vendor",data:{...v}})}>Edit</Btn>
                       <Btn small danger onClick={()=>{if(confirm(`Delete ${v.name}?`))delVendor(v.id);}}>Del</Btn>
                     </div>}
                   </div>
-                  <p style={{fontSize:12,color:G500,lineHeight:1.6,margin:"6px 0 0"}}>{v.desc}</p>
+                  <p style={{fontSize:14,color:G500,lineHeight:1.6,margin:"6px 0 0"}}>{v.desc}</p>
                 </div>
               ))}
               {edit&&<div style={{border:`2px dashed ${G300}`,borderRadius:10,padding:18,display:"flex",alignItems:"center",justifyContent:"center",minHeight:100}}>
