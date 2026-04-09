@@ -112,11 +112,11 @@ function VendorBlock({v, vc, compact, T=light}) {
       borderRadius:8, padding: compact ? "9px 14px" : "10px 16px",
       flex:1, minWidth: compact ? 90 : 130,
     }}>
-      <div style={{fontSize:compact?12:13,fontWeight:600,color:v.color,marginBottom:compact?3:4,textAlign:"center"}}>{v.name}</div>
-      <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:vc.note&&!compact?3:0,justifyContent:"center"}}>
+      <div style={{fontSize:compact?12:13,fontWeight:600,color:v.color,marginBottom:compact?3:4}}>{v.name}</div>
+      <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:vc.note&&!compact?3:0}}>
         {CHANNELS.map(ch=>{const active=vc.ch.includes(ch);return <span key={ch} style={{fontSize:11,fontWeight:active?600:400,color:active?v.color:"#D1D5DB",background:active?v.color+"12":"none",padding:"1px 6px",borderRadius:3}}>{ch}</span>;})}
       </div>
-      {!compact && vc.note && <div style={{fontSize:11,color:T.textTri,fontStyle:vc.note==="To be confirmed"?"italic":"normal",textAlign:"center"}}>{vc.note}</div>}
+      {!compact && vc.note && <div style={{fontSize:11,color:T.textTri,fontStyle:vc.note==="To be confirmed"?"italic":"normal"}}>{vc.note}</div>}
     </div>
   );
 }
@@ -190,11 +190,11 @@ export default function App() {
         {/* JOURNEY */}
         {tab==="journey"&&(
           <div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:16,marginBottom:20,fontSize:12,color:T.textSec,justifyContent:"center"}}>
+            <div style={{display:"flex",flexWrap:"wrap",gap:16,marginBottom:20,fontSize:12,color:T.textSec}}>
               {V.map(v=><span key={v.id} style={{display:"flex",alignItems:"center",gap:5}}><span style={{display:"inline-block",width:8,height:8,borderRadius:2,background:v.color}}/>{v.name}</span>)}
             </div>
 
-            {S.map((stage,si)=>{
+            {S.map(stage=>{
               const actV=V.filter(v=>stage.vc[v.id]?.on);
               const {warnings,totalTouches}=getOverlaps(stage,V);
               const isExp=exp===stage.id;
@@ -205,10 +205,8 @@ export default function App() {
               const many=actV.length>4;
 
               return (
-                <div key={stage.id}>
-                {si>0&&<div style={{width:2,height:20,background:"#E5E7EB",margin:"0 auto"}}/>}
-                <div style={{
-                  marginBottom:0,borderRadius:10,overflow:"hidden",
+                <div key={stage.id} style={{
+                  marginBottom:4,borderRadius:10,overflow:"hidden",
                   border:`1px solid ${isLost?RED+"30":isEscalated?AM+"40":T.border}`,
                   background:isLost?RED+"03":isEscalated?AM+"04":T.card,
                 }}>
@@ -216,22 +214,22 @@ export default function App() {
                     <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:sc,borderRadius:"10px 0 0 10px"}}/>
 
                     {/* Header */}
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginBottom:4}}>
+                    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
                       <span style={{fontSize:20,fontWeight:700,color:T.text}}>{stage.label}</span>
                       <span style={{fontSize:13,color:T.textSec}}>{stage.range}</span>
                       <SB s={stage.segment}/>
-                      {edit&&<span onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}} style={{fontSize:11,color:BL,cursor:"pointer",fontWeight:600}}>Edit</span>}
-                    </div>
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:10}}>
-                      <span style={{fontSize:10,color:hasIssues?RED:GR,fontWeight:hasIssues?600:400}}>
-                        {hasIssues?`● ${warnings.length} overlap${warnings.length>1?"s":""}`:"\u2713 Clean"}
+                      <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:6}}>
+                        <span style={{fontSize:11,color:hasIssues?RED:GR,fontWeight:hasIssues?600:400}}>
+                          {hasIssues?`● ${warnings.length} overlap${warnings.length>1?"s":""}`:"\u2713 Clean"}
+                        </span>
+                        <span style={{fontSize:11,color:T.textTri}}>{totalTouches} touches</span>
+                        {edit&&<span onClick={e=>{e.stopPropagation();setMod({type:"stage",data:{...stage}});}} style={{fontSize:11,color:BL,cursor:"pointer",fontWeight:600,marginLeft:4}}>Edit</span>}
+                        <span style={{color:T.border,transform:isExp?"rotate(90deg)":"none",transition:"transform .15s",display:"inline-block",fontSize:16}}>›</span>
                       </span>
-                      <span style={{fontSize:10,color:T.textTri}}>{totalTouches} touches</span>
-                      <span style={{color:T.border,transform:isExp?"rotate(90deg)":"none",transition:"transform .15s",display:"inline-block",fontSize:16}}>›</span>
                     </div>
 
                     {/* Vendor blocks */}
-                    <div style={{display:"flex",gap:many?6:8,flexWrap:"wrap",justifyContent:"center"}}>
+                    <div style={{display:"flex",gap:many?6:8,flexWrap:"wrap"}}>
                       {actV.map(v=><VendorBlock key={v.id} v={v} vc={stage.vc[v.id]} compact={many} T={T}/>)}
                     </div>
 
@@ -246,11 +244,11 @@ export default function App() {
                   {/* Expanded */}
                   {isExp&&(
                     <div onClick={e=>e.stopPropagation()} style={{padding:"0 22px 18px",borderTop:`1px solid ${T.border}40`,cursor:"default"}}>
-                      <p style={{fontSize:14,color:T.text,lineHeight:1.6,margin:"14px auto 12px",textAlign:"center",maxWidth:600}}>{stage.goal}</p>
+                      <p style={{fontSize:14,color:T.text,lineHeight:1.6,margin:"14px 0 12px"}}>{stage.goal}</p>
 
                       {warnings.length>0&&(
-                        <div style={{marginBottom:12,maxWidth:600,margin:"0 auto 12px"}}>
-                          <div style={{fontSize:11,fontWeight:600,color:T.textSec,marginBottom:6,textTransform:"uppercase",letterSpacing:.5,textAlign:"center"}}>Overlap analysis</div>
+                        <div style={{marginBottom:12}}>
+                          <div style={{fontSize:11,fontWeight:600,color:T.textSec,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Overlap analysis</div>
                           {warnings.map((w,i)=>(
                             <div key={i} style={{padding:"8px 12px",marginBottom:4,borderRadius:6,fontSize:12,lineHeight:1.5,background:w.level==="alert"?"#FEE2E2":"#FEF3C7",color:w.level==="alert"?"#991B1B":"#92400E"}}>
                               <strong>{w.channel}:</strong> {w.vendors.join(", ")} ({w.count} vendors)
@@ -261,14 +259,13 @@ export default function App() {
                       )}
 
                       {(stage.offers.length>0||stage.financing.length>0)&&(
-                        <div style={{display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center"}}>
+                        <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
                           {stage.offers.map((o,i)=><span key={i} style={{fontSize:11,padding:"3px 10px",borderRadius:99,background:T.borderLight,color:T.text,border:`1px solid ${T.border}`}}>{o}</span>)}
                           {stage.financing.map((f,i)=><span key={i} style={{fontSize:11,padding:"3px 10px",borderRadius:99,background:"#EFF6FF",color:"#1E40AF",border:"1px solid #BFDBFE"}}>{f}</span>)}
                         </div>
                       )}
                     </div>
                   )}
-                </div>
                 </div>
               );
             })}
