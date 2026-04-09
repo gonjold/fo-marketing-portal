@@ -33,35 +33,35 @@ const initV = [
 
 const initS = [
   {id:"s1",range:"<30 Days RDR",label:"New Owner",segment:"Active",goal:"Introduce service center, build relationship, activate ToyotaCare benefits.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Welcome, New Owner, ToyotaCare Intro"},v2:{on:false,ch:[],note:""},v3:{on:false,ch:[],note:""},v4:{on:false,ch:[],note:""},v5:{on:false,ch:[],note:""},v6:{on:true,ch:["Call","Text","Email"],note:"Sales Follow-Up, Service Intro"}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:false,ch:[],note:""},v3:{on:false,ch:[],note:""},v4:{on:false,ch:[],note:""},v5:{on:false,ch:[],note:""},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c1",title:"Welcome / New Owner Kit",channels:"Mail + Email",desc:"Introduction to service center, ToyotaCare overview, first-visit incentive",img:""},{id:"c2",title:"ToyotaCare Activation",channels:"Email + SMS",desc:"Complimentary maintenance plan benefits and first service scheduling",img:""}],
     offers:["$35.55 Full Synthetic Oil Change","Complimentary Multi-Point Inspection","Free Shuttle"],financing:["Sunbit: 3-month 0% APR, 97% approval","Morgan Platinum: 6-month deferred interest"]},
   {id:"s2",range:"<30 Days RO",label:"After Service",segment:"Active",goal:"Capture declined/deferred work, reinforce positive experience, drive CSI.",
-    vc:{v1:{on:true,ch:["Email","SMS"],note:"ASR, Service Recommendation"},v2:{on:false,ch:[],note:""},v3:{on:false,ch:[],note:""},v4:{on:false,ch:[],note:""},v5:{on:false,ch:[],note:""},v6:{on:true,ch:["Call","Text","Email"],note:"Declined/Deferred Follow-Up, CSI"}},
+    vc:{v1:{on:true,ch:["Email","SMS"],note:"ASR, Service Recommendation"},v2:{on:false,ch:[],note:""},v3:{on:false,ch:[],note:""},v4:{on:false,ch:[],note:""},v5:{on:false,ch:[],note:""},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c3",title:"After Service Review (ASR)",channels:"Email + SMS",desc:"Automated post-RO follow-up with service recommendations",img:""},{id:"c4",title:"Declined Service Reminder",channels:"Email",desc:"Follow up on declined services with pricing and urgency",img:""}],
     offers:["Declined service discount","Free re-inspection"],financing:["Sunbit: 3-month 0% APR"]},
   {id:"s3",range:"5-6 Months RO",label:"Scheduled Service Due",segment:"Active",goal:"Proactive reminder before overdue. Highest-conversion retention window.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Scheduled Service Due, ToyotaCare"},v2:{on:false,ch:[],note:""},v3:{on:false,ch:[],note:""},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"Service reminder mailer"},v6:{on:true,ch:["Call","Text","Email"],note:"Appointment scheduling"}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:false,ch:[],note:""},v3:{on:false,ch:[],note:""},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"To be confirmed"},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c5",title:"Service Due Reminder",channels:"Mail + Email",desc:"Your Toyota is due for scheduled maintenance",img:""},{id:"c6",title:"ToyotaCare Reminder",channels:"Email + SMS",desc:"Use complimentary maintenance before expiration",img:""}],
     offers:["$35.55 Oil Change","$99 4-Wheel Alignment","Buy 3 Tires Get 4th for $1"],financing:[]},
   {id:"s4",range:"6-8 Months RO",label:"Service Follow-Up",segment:"Active",goal:"Second touch for non-responders. Additional vendors activate here.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Non-Responder, Scheduled Due 2"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Service Retention"},v3:{on:true,ch:["Mail","Email","SMS"],note:"Retention mailer + email"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"Service reminder"},v6:{on:true,ch:["Call","Text","Email"],note:"Outbound follow-up"}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v3:{on:true,ch:["Mail","Email","SMS"],note:"To be confirmed"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"To be confirmed"},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c7",title:"Overdue Service Reminder",channels:"Mail + Email + SMS",desc:"Escalated messaging for overdue maintenance",img:""},{id:"c8",title:"ToyotaCare Non-Responder",channels:"Email + SMS",desc:"Final ToyotaCare usage reminder",img:""}],
     offers:["$35.55 Oil Change","$99 Alignment","Tire Promo","Price Match"],financing:["Sunbit: 3-month 0% APR"]},
   {id:"s5",range:"8-12 Months RO",label:"At Risk",segment:"At Risk",goal:"Critical retention window. Maximum vendor saturation and strongest offers to prevent defection.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Past Due, TLE At Risk, Last Chance"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Business Opp Maintain"},v3:{on:true,ch:["Mail","Email","Call","SMS"],note:"At Risk retention"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"Retention mailer"},v6:{on:true,ch:["Call","Text","Email"],note:"Priority outbound"}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v3:{on:true,ch:["Mail","Email","Call","SMS"],note:"To be confirmed"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"To be confirmed"},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c9",title:"Last Chance / Past Due",channels:"Mail + Email + SMS",desc:"Escalated urgency before going inactive",img:""},{id:"c10",title:"At Risk Special Offer",channels:"Mail + Email",desc:"Enhanced discount to prevent defection",img:""}],
     offers:["$35.55 Oil Change","$99 Alignment","Tire Promo","Price Match","Free MPI"],financing:["Sunbit: 3-month 0% APR","Morgan Platinum: 6-month deferred"]},
   {id:"s6",range:"12-24 Months",label:"Inactive",segment:"Inactive",goal:"Re-engagement with aggressive offers before permanent defection.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Inactive, TLE Inactive, Recovery"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Business Opp Improve"},v3:{on:true,ch:["Mail","Email","Call","SMS"],note:"Re-engagement campaign"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"Win-back mailer"},v6:{on:true,ch:["Call","Text","Email"],note:"Recovery outbound"}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v3:{on:true,ch:["Mail","Email","Call","SMS"],note:"To be confirmed"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"To be confirmed"},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c11",title:"We Miss You",channels:"Mail + Email + SMS",desc:"Personalized return offer with vehicle info",img:""},{id:"c12",title:"Exclusive Return Offer",channels:"Mail",desc:"Higher-value printed mailer with coupon",img:""}],
     offers:["Enhanced service discount","Price Match","Free inspection"],financing:["Sunbit: 3-month 0% APR","Morgan Platinum: 6-month deferred"]},
   {id:"s7",range:"25-60 Months",label:"Lost / Recovery",segment:"Lost",goal:"Long-shot recovery or pivot to sales conquest for aging vehicles.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Lost, Recovery, Conquest"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Conquest, Not Engaged"},v3:{on:true,ch:["Mail","Email","SMS"],note:"Conquest campaign"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"Conquest mailer"},v6:{on:true,ch:["Call","Text","Email"],note:"Conquest outbound"}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v3:{on:true,ch:["Mail","Email","SMS"],note:"To be confirmed"},v4:{on:true,ch:["Email"],note:"Monthly e-blast"},v5:{on:true,ch:["Mail","Email"],note:"To be confirmed"},v6:{on:true,ch:["Call","Text","Email"],note:"To be confirmed"}},
     creatives:[{id:"c13",title:"Win-Back Campaign",channels:"Mail + Email",desc:"Aggressive pricing, competitive positioning",img:""},{id:"c14",title:"Trade-In Opportunity",channels:"Mail + Email + Digital",desc:"Vehicle aging pivot to sales with trade evaluation",img:""}],
     offers:["Major service discount","Free inspection","Trade-in evaluation"],financing:["Sunbit: 3-month 0% APR","Morgan Platinum: 6-month deferred"]},
   {id:"s8",range:"Never Serviced",label:"Conquest / Not Engaged",segment:"Conquest",goal:"Net-new acquisition targeting customers who have never visited the dealership.",
-    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Conquest, New VIN"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"Conquest"},v3:{on:true,ch:["Mail","Email","SMS","Digital"],note:"Conquest targeting"},v4:{on:true,ch:["Email"],note:"Database blast"},v5:{on:true,ch:["Mail","Email"],note:"Conquest VIN mailer"},v6:{on:false,ch:[],note:""}},
+    vc:{v1:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v2:{on:true,ch:["Email","Mail","SMS","Digital"],note:"To be confirmed"},v3:{on:true,ch:["Mail","Email","SMS","Digital"],note:"To be confirmed"},v4:{on:true,ch:["Email"],note:"Database blast"},v5:{on:true,ch:["Mail","Email"],note:"To be confirmed"},v6:{on:false,ch:[],note:""}},
     creatives:[{id:"c15",title:"First Visit Incentive",channels:"Mail + Email + Digital",desc:"Intro offer for new-to-dealership customers",img:""},{id:"c16",title:"Conquest Pricing",channels:"Mail + Digital",desc:"Competitive pricing to pull from other dealers",img:""}],
     offers:["$35.55 Oil Change","$99 Alignment","Free MPI","Price Match"],financing:[]},
 ];
@@ -113,8 +113,10 @@ function VendorBlock({v, vc, compact, T=light}) {
       flex:1, minWidth: compact ? 90 : 130,
     }}>
       <div style={{fontSize:compact?12:13,fontWeight:600,color:v.color,marginBottom:compact?3:4}}>{v.name}</div>
-      <div style={{fontSize:compact?10:11,color:T.textSec,marginBottom:vc.note&&!compact?3:0}}>{vc.ch.join(" · ")}</div>
-      {!compact && vc.note && <div style={{fontSize:11,color:T.textTri}}>{vc.note}</div>}
+      <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:vc.note&&!compact?3:0}}>
+        {CHANNELS.map(ch=>{const active=vc.ch.includes(ch);return <span key={ch} style={{fontSize:11,fontWeight:active?600:400,color:active?v.color:"#D1D5DB",background:active?v.color+"12":"none",padding:"1px 6px",borderRadius:3}}>{ch}</span>;})}
+      </div>
+      {!compact && vc.note && <div style={{fontSize:11,color:T.textTri,fontStyle:vc.note==="To be confirmed"?"italic":"normal"}}>{vc.note}</div>}
     </div>
   );
 }
@@ -139,6 +141,7 @@ export default function App() {
   const lockUp=()=>{setEdit(false);setShowPw(false);setPw("");};
   const toggleDark=()=>{const next=!dark;setDark(next);localStorage.setItem("ccj4-theme",next?"dark":"light");};
 
+  useEffect(()=>{const params=new URLSearchParams(window.location.search);if(params.get('edit')==='true')setEdit(true);},[]);
   useEffect(()=>{try{const v=localStorage.getItem("ccj4-v");if(v)setV(JSON.parse(v));const s=localStorage.getItem("ccj4-s");if(s)setS(JSON.parse(s));}catch{}},[]);
   const sv=useCallback((v,s)=>{try{localStorage.setItem("ccj4-v",JSON.stringify(v));localStorage.setItem("ccj4-s",JSON.stringify(s));}catch{}},[]);
   const uV=v=>{setV(v);sv(v,S);};const uS=s=>{setS(s);sv(V,s);};
@@ -212,8 +215,8 @@ export default function App() {
 
                     {/* Header */}
                     <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-                      <span style={{fontSize:17,fontWeight:600,color:T.text}}>{stage.range}</span>
-                      <span style={{fontSize:12,color:T.textSec}}>{stage.label}</span>
+                      <span style={{fontSize:20,fontWeight:700,color:T.text}}>{stage.label}</span>
+                      <span style={{fontSize:13,color:T.textSec}}>{stage.range}</span>
                       <SB s={stage.segment}/>
                       <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:6}}>
                         <span style={{fontSize:11,color:hasIssues?RED:GR,fontWeight:hasIssues?600:400}}>
